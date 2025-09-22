@@ -20,6 +20,8 @@ let rightPressed = false;
 let leftPressed = false;
     //Stocke la notification Game over 
 const gameOverNotify = document.querySelector('.game-over-notify');
+    //Stocke la notification de Victoire
+const winNotify = document.querySelector('.win-notify');
     //Stock les donnes d'affichage des briques au sein du tableau 
 let brickRowCount = 3; 
 let brickColumnCount = 4;
@@ -28,6 +30,8 @@ let brickHeight = 20;
 let brickPadding = 30;
 let brickOffsetTop = 30;
 let brickOffsetLeft = 30;
+    //index de score 
+let score = 0;
 
 
 
@@ -46,8 +50,12 @@ for (let c = 0; c < brickColumnCount; c++) {
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 gameOverNotify.addEventListener("click", function() {
-  document.location.reload();
+    document.location.reload();
 });
+winNotify.addEventListener("click", function() {
+    document.location.reload();
+});
+
 
 
 // Fonction permettant de detecter la touche pressee 
@@ -114,6 +122,7 @@ function drawBricks() {
 }
 
 
+
 //Fonction de detction des collisions entre la balle et les briques 
 function detectionCollision() {
     for (let c = 0; c < brickColumnCount; c++) {
@@ -123,10 +132,24 @@ function detectionCollision() {
                 if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
                     dy = -dy;
                     b.status = 0;
+                    score++;
+                    if (score == brickColumnCount * brickRowCount) {
+                        winNotify.style.display = 'flex';
+                        clearInterval(interval);
+                    }
                 }
             }
         }
     }
+}
+
+
+
+//Fonction permettant d'afficher le score
+function drawScore () {
+    ctx.font = '18px Arial';
+    ctx.fillStyle = '#0095DD';
+    ctx.fillText(`Score: ${score}`, 8, 20);
 }
 
 
@@ -140,6 +163,7 @@ function draw () {
     drawBricks();
     drawPaddle();
     detectionCollision();
+    drawScore();
     
 
     // Si la balle 'touche' un mur, elle rebondit dans la direction oppose
