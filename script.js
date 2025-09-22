@@ -18,8 +18,8 @@ let paddleX = (canvas.width - paddleWidth) / 2;
     // stocke l'etat des touches 'gauche' et 'droite' 
 let rightPressed = false; 
 let leftPressed = false;
-    // stocke la fonction d'appel a intervale regulier permettant au jeu de demarrer
-const interval = setInterval(draw, 10);
+    //Stocke la notification Game over 
+const gameOverNotify = document.querySelector('.game-over-notify');
     //Stock les donnes d'affichage des briques au sein du tableau 
 let brickRowCount = 3; 
 let brickColumnCount = 4;
@@ -36,7 +36,7 @@ let bricks = [];
 for (let c = 0; c < brickColumnCount; c++) {
     bricks [c] = [];
     for (let r = 0; r < brickRowCount; r++) {
-        bricks[c][r] = { x: 0 , y: 0 };
+        bricks[c][r] = { x: 0 , y: 0, status: 1 };
     }
 }
 
@@ -45,6 +45,9 @@ for (let c = 0; c < brickColumnCount; c++) {
 // Ecouteurs d'evenements pour les touches clavier
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
+gameOverNotify.addEventListener("click", function() {
+  document.location.reload();
+});
 
 
 // Fonction permettant de detecter la touche pressee 
@@ -73,7 +76,7 @@ function keyUpHandler (e) {
 function drawBall () {
     ctx.beginPath();
     ctx.arc(x, y, ballRadius ,0, Math.PI * 2);
-    ctx.fillStyle = "0095DD"
+    ctx.fillStyle = "#0095DD"
     ctx.fill();
     ctx.closePath()
 }
@@ -84,7 +87,7 @@ function drawBall () {
 function drawPaddle () {
     ctx.beginPath();
     ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
-    ctx.fillStyle = '0095DD'
+    ctx.fillStyle = '#0095DD'
     ctx.fill();
     ctx.closePath();
 }
@@ -95,32 +98,55 @@ function drawPaddle () {
 function drawBricks() {
     for (let c = 0; c < brickColumnCount; c++) {
         for (let r = 0; r < brickRowCount; r++) {
-            let brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
-            let brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
-            bricks[c][r].x = 0;
-            bricks[c][r].y = 0;
-            ctx.beginPath();
-            ctx.rect(brickX, brickY, brickWidth, brickHeight);
-            ctx.fillStyle = '#0095DD';
-            ctx.fill();
-            ctx.closePath();
+            if (bricks[c][r].status == 1) {
+                let brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
+                let brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
+                bricks[c][r].x = brickX;
+                bricks[c][r].y = brickY;
+                ctx.beginPath();
+                ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                ctx.fillStyle = '#0095DD';
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+    }
+}
+
+
+//Fonction de detction des collisions entre la balle et les briques 
+function detectionCollision() {
+    for (let c = 0; c < brickColumnCount; c++) {
+        for (let r = 0; r < brickRowCount; r++) {
+            let b = bricks[c][r];
+            if (b.status == 1) {
+                if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+                    dy = -dy;
+                    b.status = 0;
+                }
+            }
         }
     }
 }
 
 
 
-
-// fonction permettant d'effacer et redessiner la balle avec une 
+// fonction permettant d'effacer et redessiner la balle ainsi que le reste du canvas grace a 
+// ces differentes fonctions intgrees vus plus haut 
 // position differente a chaque frame 
 function draw () {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     drawBall();
     drawBricks();
     drawPaddle();
+    detectionCollision();
     
 
     // Si la balle 'touche' un mur, elle rebondit dans la direction oppose
+        // A gauche et a droite
+    if (x + dx < ballRadius || x + dx  > canvas.width-ballRadius) {
+        dx = -dx;
+    }
         // en haut et en bas (perdu si en bas hors de la raquette) 
     if (y + dy < ballRadius) {
         dy = -dy;
@@ -128,18 +154,13 @@ function draw () {
         if (x > paddleX && x < paddleX + paddleWidth) {
             dy = -dy;
         } else {                                    
-            alert('GAME OVER.. TRY AGAIN !') 
-            document.location.reload();             //Recharge la page 
+            gameOverNotify.style.display = 'flex'  
             clearInterval(interval);                //Arrete le deplacement de la balle 
-            x = canvas.width / 2;                   //Replace la balle a son point de depart
-            y = canvas.height - 30;
+            return;
         }
     }
 
-        // A gauche et a droite
-    if (x + dx < ballRadius || x + dx  > canvas.width-ballRadius) {
-        dx = -dx;
-    }
+    
 
     // Deplacement de la raquette de gauche a droite a l'aide des touches  ==> possiblite de reduire le code 
     if (rightPressed) {
@@ -160,8 +181,9 @@ function draw () {
 }
 
 
-//Appel de la fonction draw toutes les 10ms
-setInterval(draw, 10);
+
+// stocke et appelle la fonction d'appel a intervale regulier permettant au jeu de demarrer
+const interval = setInterval(draw, 10);
 
 
 
