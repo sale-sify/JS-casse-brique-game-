@@ -8,14 +8,29 @@
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
+    
+    <div class="container">
+        <div class="score-container">
+            <p id="score"></p>
+        </div>
+        <canvas id="myCanvas" width="780" height="520"></canvas>
+    </div>
 
-    <canvas id="myCanvas" width="480" height="320">
+    <div class="game-over-notify-overlay">
+        <div class="game-over-box">
+            <p>C'est perdu ...</p>
+            <img src="/images/game-over.png" alt="">
+            <button class="replay-btn">Rejouer</button>
+        </div>
+    </div>
 
-    </canvas>
-
-    <div class="game-over-notify">Game Over</div>
-
-    <div class="win-notify">C'est gagne ! <img src="" alt=""></div>
+    <div class="win-notify-overlay">
+        <div class="win-box">
+            <p>C'est Gagne !</p>
+            <img src="/images/big-win.png" alt="">
+            <button class="replay-btn">Rejouer</button>
+        </div>
+    </div>
 
     
 

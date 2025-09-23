@@ -19,12 +19,14 @@ let paddleX = (canvas.width - paddleWidth) / 2;
 let rightPressed = false; 
 let leftPressed = false;
     //Stocke la notification Game over 
-const gameOverNotify = document.querySelector('.game-over-notify');
+const gameOverNotify = document.querySelector('.game-over-notify-overlay');
     //Stocke la notification de Victoire
-const winNotify = document.querySelector('.win-notify');
+const winNotify = document.querySelector('.win-notify-overlay');
+    //Definie le bouton 'rejouer'
+const replayBtn = document.querySelectorAll('.replay-btn');
     //Stock les donnes d'affichage des briques au sein du tableau 
 let brickRowCount = 3; 
-let brickColumnCount = 4;
+let brickColumnCount = 7;
 let brickWidth = 75;
 let brickHeight = 20;
 let brickPadding = 30;
@@ -49,12 +51,42 @@ for (let c = 0; c < brickColumnCount; c++) {
 // Ecouteurs d'evenements pour les touches clavier
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
-gameOverNotify.addEventListener("click", function() {
-    document.location.reload();
-});
-winNotify.addEventListener("click", function() {
-    document.location.reload();
-});
+
+// Ecouteur d'enevement au click pour les boutons 'rejouer' afin de recharger la page 
+for (let i = 0; i < replayBtn.length; i++) {
+    replayBtn[i].addEventListener('click', function() {
+        this.style.boxShadow = 'inset -7px -6px 12px rgba(0, 0, 95, 1)'
+        this.style.color = 'rgba(255, 255, 255, 0.5)'
+        document.location.reload();
+    })
+};
+
+
+//Ecouteur d'evenement mouse hover pour l'interaction au passage de la souris 
+for (let i = 0; i < replayBtn.length; i++) {
+    replayBtn[i].addEventListener('mouseenter', function() {
+        this.style.boxShadow = 'inset -4px -3px 8px rgba(2, 2, 160, 1)'
+    })
+};
+for (let i = 0; i < replayBtn.length; i++) {
+    replayBtn[i].addEventListener('mouseleave', function() {
+        this.style.boxShadow = 'inset 4px 3px 8px rgb(248, 233, 213)'
+    })
+};
+for (let i = 0; i < replayBtn.length; i++) {
+    replayBtn[i].addEventListener('mousedown', function() {
+        this.style.boxShadow = 'inset -7px -6px 12px rgba(0, 0, 95, 1)'
+        this.style.color = 'rgba(255, 255, 255, 0.5)'
+    })
+};
+for (let i = 0; i < replayBtn.length; i++) {
+    replayBtn[i].addEventListener('mouseup', function() {
+        this.style.boxShadow = 'inset -4px -3px 8px rgba(2, 2, 160, 1)'
+        this.style.color = 'rgb(248, 233, 213)'
+    })
+};
+
+
 
 
 
@@ -134,8 +166,9 @@ function detectionCollision() {
                     b.status = 0;
                     score++;
                     if (score == brickColumnCount * brickRowCount) {
-                        winNotify.style.display = 'flex';
                         clearInterval(interval);
+                        winNotify.style.display = 'flex';
+                        
                     }
                 }
             }
@@ -147,9 +180,7 @@ function detectionCollision() {
 
 //Fonction permettant d'afficher le score
 function drawScore () {
-    ctx.font = '18px Arial';
-    ctx.fillStyle = '#0095DD';
-    ctx.fillText(`Score: ${score}`, 8, 20);
+    document.getElementById('score').textContent = `Score : ${score}`
 }
 
 
@@ -208,6 +239,14 @@ function draw () {
 
 // stocke et appelle la fonction d'appel a intervale regulier permettant au jeu de demarrer
 const interval = setInterval(draw, 10);
+
+
+
+
+
+
+
+
 
 
 
