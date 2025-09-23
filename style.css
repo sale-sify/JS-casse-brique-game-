@@ -43,6 +43,27 @@ canvas {
     
 }
 
+.lives-container {
+    background: blue;
+    position: relative;
+    left: 60%;
+    top: 7.5%;
+    height: 6vh;
+    width: 20vh;
+    border-radius: 15px;
+    border: 2px solid antiquewhite;
+    box-shadow: inset 2px 2px 4px antiquewhite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lives-container > img {
+    height: 60%;
+    margin: 5px;
+    position: sticky;
+}
+
 .game-over-notify-overlay {
     position: fixed;
     display: none;

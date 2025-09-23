@@ -25,15 +25,17 @@ const winNotify = document.querySelector('.win-notify-overlay');
     //Definie le bouton 'rejouer'
 const replayBtn = document.querySelectorAll('.replay-btn');
     //Stock les donnes d'affichage des briques au sein du tableau 
-let brickRowCount = 3; 
+let brickRowCount = 5; 
 let brickColumnCount = 7;
-let brickWidth = 75;
+let brickWidth = 77;
 let brickHeight = 20;
 let brickPadding = 30;
 let brickOffsetTop = 30;
 let brickOffsetLeft = 30;
     //index de score 
 let score = 0;
+    //Nombre de vies
+let lives = 3;
 
 
 
@@ -73,6 +75,7 @@ for (let i = 0; i < replayBtn.length; i++) {
         this.style.boxShadow = 'inset 4px 3px 8px rgb(248, 233, 213)'
     })
 };
+//Ecouteur d'evenement mouse down/up pour l'interaction au click et relacher de la souris
 for (let i = 0; i < replayBtn.length; i++) {
     replayBtn[i].addEventListener('mousedown', function() {
         this.style.boxShadow = 'inset -7px -6px 12px rgba(0, 0, 95, 1)'
@@ -185,6 +188,16 @@ function drawScore () {
 
 
 
+//Fonction permettant l'affichage des vie
+function drawLives () {
+    if (lives == 2) {
+        document.querySelector('.live-3').style.display = 'none'
+    } else if (lives == 1) {
+        document.querySelector('.live-2').style.display = 'none'
+    } 
+};
+
+
 // fonction permettant d'effacer et redessiner la balle ainsi que le reste du canvas grace a 
 // ces differentes fonctions intgrees vus plus haut 
 // position differente a chaque frame 
@@ -195,6 +208,7 @@ function draw () {
     drawPaddle();
     detectionCollision();
     drawScore();
+    drawLives();
     
 
     // Si la balle 'touche' un mur, elle rebondit dans la direction oppose
@@ -208,10 +222,21 @@ function draw () {
     } else if ( y + dy  > canvas.height-ballRadius) {
         if (x > paddleX && x < paddleX + paddleWidth) {
             dy = -dy;
-        } else {                                    
-            gameOverNotify.style.display = 'flex'  
-            clearInterval(interval);                //Arrete le deplacement de la balle 
-            return;
+        } else {  
+            lives = lives - 1;
+            if (!lives) {
+                document.querySelector('.live-1').style.display = 'none'
+                gameOverNotify.style.display = 'flex';  
+                clearInterval(interval);                //Arrete le deplacement de la balle 
+                return;
+            } else if (lives) {
+                x = canvas.width / 2;                   //Remet la balle te le paddle 
+                y = canvas.height - 30;                 //a la position de depart
+                dx = 2;
+                dy = -2;
+                paddleX = (canvas.width - paddleWidth) / 2;
+            }                            
+            
         }
     }
 
