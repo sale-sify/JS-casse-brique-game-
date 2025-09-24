@@ -75,6 +75,7 @@ for (let i = 0; i < replayBtn.length; i++) {
         this.style.boxShadow = 'inset 4px 3px 8px rgb(248, 233, 213)'
     })
 };
+
 //Ecouteur d'evenement mouse down/up pour l'interaction au click et relacher de la souris
 for (let i = 0; i < replayBtn.length; i++) {
     replayBtn[i].addEventListener('mousedown', function() {
@@ -170,8 +171,7 @@ function detectionCollision() {
                     score++;
                     if (score == brickColumnCount * brickRowCount) {
                         clearInterval(interval);
-                        winNotify.style.display = 'flex';
-                        
+                        winNotify.style.display = 'flex';   
                     }
                 }
             }
@@ -184,7 +184,7 @@ function detectionCollision() {
 //Fonction permettant d'afficher le score
 function drawScore () {
     document.getElementById('score').textContent = `Score : ${score}`
-}
+};
 
 
 
